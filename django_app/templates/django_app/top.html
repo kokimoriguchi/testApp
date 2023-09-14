@@ -1,0 +1,33 @@
+<!-- prettier-ignore -->
+{% extends "base.html" %}
+{% block main %}
+<div class="welcome">
+  <h1 class="title">ようこそDjango Appへ!</h1>
+  <p class="subtitle">あなたの知見を共有しよう</p>
+  <a class="btn btn-primary" href="{% url 'app_new' %}">新規投稿</a>
+</div>
+
+{% if apps %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>投稿者</th>
+      <th>投稿日</th>
+      <th>タイトル</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for app in apps %}
+    <tr>
+      <th>{{ app.created_by.username }}</th>
+      <th>{{ app.created_at }}</th>
+      <th>
+        <a href="{% url 'app_detail' app.id %}">{{ app.title }}</a>
+      </th>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>投稿はありません。</p>
+{% endif %} {% endblock %}

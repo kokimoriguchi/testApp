@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load pygmentize %}
+
+{% block extra_header %}
+<style>
+  {% pygments_css %}
+</style>
+{% endblock %}
+
+{% block main %}
+<h2>{{ app.title }} by {{ app.created_by.username }}</h2>
+
+<div class="app-date">
+  投稿日：{{ app.created_at|date:"DATETIME_FORMAT" }}
+  {% if user.is_authenticated and app.created_by_id == user.id %}
+  <a href="{% url 'app_edit' app.id %}">編集</a>
+  {% endif %}
+</div>
+
+<div class="source-code">
+  {{ app.code|pygmentize:"python" }}
+</div>
+
+<p>{{ app.description }}</p>
+{% endblock %}

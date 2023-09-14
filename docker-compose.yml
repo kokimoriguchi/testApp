@@ -1,0 +1,40 @@
+services:
+  mysql:
+    image: mysql:8.0.20
+    platform: linux/x86_64
+    container_name: test-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: test
+      MYSQL_DATABASE: test-local_db
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+      TZ: "Asia/Tokyo"
+    command: >
+      mysqld --default-authentication-plugin=mysql_native_password
+
+    volumes:
+      - ./data/data:/var/lib/mysql
+
+    ports:
+      - 3306:3306
+
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u$$MYSQL_USER -p$$MYSQL_PASSWORD
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  web:
+    build: .
+    command: python3 manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  data:
